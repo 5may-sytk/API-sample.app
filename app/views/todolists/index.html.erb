@@ -1,0 +1,13 @@
+<div class="list-wrap">
+<% @lists.each do |list| %>
+  <div class="list-box">
+    <% if list.image.attached? %>
+      <%= image_tag list.image.variant(resize:'200x200') %>
+    <% end %>
+    <div class="list-comment">
+      <span class="list-body"><%= list.body %></span>
+      <span class="list-title"><%=link_to list.title, todolist_path(list.id) %></span>
+    </div>
+  </div>
+<% end %>
+</div>
