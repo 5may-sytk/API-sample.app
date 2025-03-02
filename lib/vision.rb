@@ -37,8 +37,34 @@ module Vision
       if (error = response_body['responses'][0]['error']).present?
         raise error['message']
       else
-        response_body['responses'][0]['labelAnnotations'].pluck('description').take(3)
+        # 英語のラベルを取得
+        labels = response_body['responses'][0]['labelAnnotations'].pluck('description').take(3)
+
+        # 日本語に翻訳
+        labels.map { |label| translate_text(label) }
       end
+    end
+
+    private
+
+    def translate_text(text)
+      translate_url = "https://translation.googleapis.com/language/translate/v2?key=#{ENV['Google_API_KEY']}"
+
+      params = {
+        q: text,
+        target: 'ja', # 翻訳先の言語（日本語）
+        format: 'text'
+      }.to_json
+
+      uri = URI.parse(translate_url)
+      https = Net::HTTP.new(uri.host, uri.port)
+      https.use_ssl = true
+      request = Net::HTTP::Post.new(uri.request_uri, { 'Content-Type' => 'application/json' })
+      response = https.request(request, params)
+      response_body = JSON.parse(response.body)
+
+      response_body.dig('data', 'translations', 0, 'translatedText') || text
+      
     end
   end
 end
