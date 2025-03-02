@@ -6,11 +6,15 @@ class TodolistsController < ApplicationController
   def create
     @list = List.new(list_params)
     @list.score = Language.get_data(list_params[:body]) 
-    tags = Vision.get_image_data(list_params[:image])
+
+    is_safe = Vision.check_image_safety(list_params[:image])
+    if is_safe
+      flash[:alert] = "投稿に問題ありません"
+      render :new
+      return
+    end
+
     if @list.save
-      tags.each do |tag|
-        @list.tags.create(name: tag)
-      end
       redirect_to todolist_path(@list.id)
     else
       render :new
