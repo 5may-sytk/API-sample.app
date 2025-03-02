@@ -6,7 +6,7 @@ module Language
   class << self
     def get_data(text)
       # APIのURL作成
-      api_url = "https://language.googleapis.com/v1/documents:analyzeSentiment?key=#{ENV['GOOGLE_API_KEY']}"
+      api_url = "https://language.googleapis.com/v1/documents:analyzeSentiment?key=#{ENV['Google_API_KEY']}"
       # APIリクエスト用のJSONパラメータ
       params = {
         document: {
