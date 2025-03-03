@@ -11,6 +11,9 @@ class TodolistsController < ApplicationController
     if is_safe
       if @list.save
         redirect_to todolist_path(@list.id)
+        tags.each do |tag|
+          @list.tags.create(name: tag)
+        end
       else
         flash.now[:notice] = "この画像はエラーです"
         render :new

@@ -15,6 +15,7 @@ module Vision
           features: [
             {
               type: "SAFE_SEARCH_DETECTION"
+              type: "LABEL_DETECTION"
             }
           ]
         }]
@@ -38,6 +39,16 @@ module Vision
         else
           true
         end
+      end
+
+      if (error = response_body['responses'][0]['error']).present?
+        raise error['message']
+      else
+        # 英語のラベルを取得
+        labels = response_body['responses'][0]['labelAnnotations'].pluck('description').take(3)
+
+        # 日本語に翻訳
+        labels.map { |label| translate_text(label) }
       end
     end
   end
