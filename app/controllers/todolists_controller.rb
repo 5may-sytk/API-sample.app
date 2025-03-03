@@ -7,17 +7,14 @@ class TodolistsController < ApplicationController
     @list = List.new(list_params)
     @list.score = Language.get_data(list_params[:body]) 
 
-    is_safe = Vision.check_image_safety(list_params[:image])
+    is_safe = Vision.image_analysis(list_params[:image])
     if is_safe
-      flash[:alert] = "投稿に問題ありません"
-      render :new
-      return
-    end
-
-    if @list.save
-      redirect_to todolist_path(@list.id)
-    else
-      render :new
+      if @list.save
+        redirect_to todolist_path(@list.id)
+      else
+        flash.now[:notice] = "この画像はエラーです"
+        render :new
+      end
     end
   end
 
